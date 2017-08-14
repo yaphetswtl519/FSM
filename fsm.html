@@ -1,0 +1,57 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta http-equiv="X-UA-Compatible" content="ie=edge">
+    <title>Document</title>
+</head>
+<body>
+    <div>Finite State Machine</div>
+    <button id="btn"></button>
+    <script>
+        var Switch = function ($elem) {
+            var log = function (fsm, previousState) {
+                console.log('currentState is : ' + fsm.currentState + ((previousState || '') && (' , and previous state is : ' + previousState)));
+            };
+            return {
+                currentState: 'off',
+                states: {
+                    'on': {
+                        to: 'off',
+                        action: 'turnOff'
+                    },
+                    'off': {
+                        to: 'on',
+                        action: 'turnOn'
+                    }
+                },
+                init: function () {
+                    var self = this;
+                    $elem.on('click', (function () {
+                        var args = arguments;
+                        return function () {
+                            self.transition(args);
+                        }
+                    })());
+                    log(this);
+                },
+                transition: function (e) {
+                    var old = this.currentState;
+                    this.currentState = this.states[old].to;
+                    var action = this.states[old].action;
+                    (action in this) && this[action](old);
+                },
+                turnOn: function (fromState) {
+                    $elem.addClass('on');
+                    log(this, fromState);
+                },
+                turnOff: function (fromState) {
+                    $elem.removeClass('on');
+                    log(this, fromState);
+                }
+            }
+        };
+    </script>
+</body>
+</html>
